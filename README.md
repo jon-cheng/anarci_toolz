@@ -12,7 +12,7 @@ Here, we present `anarci-toolz`, a performant convenient wrapper for ANARCI and 
 ## Installation
 
 ```Bash
-pip install <github-url>
+pip install git+https://github.com/jon-cheng/anarci_toolz.git
 ```
 
 ### Requirements
