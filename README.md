@@ -156,6 +156,8 @@ Processing sequences: 100%|█████████████████�
 
 ```
 
+Note: the output csv gets written to a subdirectory `anarci_annot` from the directory in which you run the `anarci-toolz` command, with the output filename being `<input_filename>_anarci_annot.csv`.
+
 Output table, note the output columns are appended to the existing input columns:
 
 |    | Therapeutic   | Format    | chain_type_input   | sequence_aa                                                                                                                          | scheme   | passed_abnumber   | sequence_alignment_aa                                                                                                                | species   | chain_type   | v_gene      | j_gene   | cdr1_aa   | cdr2_aa   | cdr3_aa                    | fr1_aa                    | fr2_aa            | fr3_aa                                 | fr4_aa      | passed_anarci   |   variable_region_start_index |   variable_region_end_index |   e_value |   bitscore |   bias |
