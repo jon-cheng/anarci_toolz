@@ -1,0 +1,29 @@
+name: Tag new version
+
+on:
+  push:
+    branches:
+      - main  # Change to your main branch
+
+jobs:
+  tag_version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Get version from package
+        id: get_version
+        run: echo "VERSION=$(python -c 'import anarci_toolz; print(anarci_toolz.__version__)')" >> $GITHUB_ENV
+
+      - name: Create Git tag
+        run: |
+          git tag v${{ env.VERSION }}
+          git push origin v${{ env.VERSION }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
