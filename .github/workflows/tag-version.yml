@@ -3,7 +3,7 @@ name: Tag new version
 on:
   push:
     branches:
-      - main  # Change to your main branch
+      - main  # Trigger on pushes to the main branch
 
 jobs:
   tag_version:
