@@ -121,6 +121,51 @@ df_result = run_anarci_tools(
 
 The Command Line tool can take multiple csv inputs, and will generate one or multiple csv table outputs into a subdirectory `anarci_annot`.
 
+##### Example using `test_files`
+Here we run a test on a sample of the TheraSabDab database of sequences:
+
+Input table:
+
+|    | Therapeutic   | Format    | chain_type_input   | sequence_aa                                                                                                                          |
+|----|---------------|-----------|--------------------|--------------------------------------------------------------------------------------------------------------------------------------|
+|  0 | Timigutuzumab | Whole mAb | HeavySequence      | EVQLVESGGGLVQPGGSLRLSCAASGFNIKDTYIHWVRQAPGKGLEWVARIYPTNGYTRYADSVKGRFTISADTSKNTAYLQMNSLRAEDTAVYYCSRWGGDGFYAMDYWGQGTLVTVSS             |
+|  1 | Inebilizumab  | Whole mAb | HeavySequence      | EVQLVESGGGLVQPGGSLRLSCAASGFTFSSSWMNWVRQAPGKGLEWVGRIYPGDGDTNYNVKFKGRFTISRDDSKNSLYLQMNSLKTEDTAVYYCARSGFITTVRDFDYWGQGTLVTVSS            |
+|  2 | Frexalimab    | Whole mAb | HeavySequence      | EVQLQESGPGLVKPSETLSLTCTVSGDSITNGFWIWIRKPPGNKLEYMGYISYSGSTYYNPSLKSRISISRDTSKNQFSLKLSSVTAADTGVYYCAYRSYGRTPYYFDYWGQGTTLTVSS             |
+|  3 | Vantictumab   | Whole mAb | HeavySequence      | EVQLVESGGGLVQPGGSLRLSCAASGFTFSHYTLSWVRQAPGKGLEWVSVISGDGSYTYYADSVKGRFTISSDNSKNTLYLQMNSLRAEDTAVYYCARNFIKYVFANWGQGTLVTVSS               |
+|  4 | Elipovimab    | Whole mAb | HeavySequence      | QMQLQESGPGLVKPSETLSLTCSVSGASISDSYWSWIRRSPGKGLEWIGYVHKSGDTNYNPSLKSRVHLSLDTSKNQVSLSLTGVTAADSGKYYCARTLHGRRIYGIVAFNEWFTYFYMDVWGTGTQVTVSS |
+
+```Bash
+anarci-toolz \
+    --input "test_files" \  # input directory
+    --scheme "imgt" \
+    --seq_aa_header "sequence_aa" \
+    --allowed_species "human"
+
+test_files
+['test_files/therasabdab_sample.csv']
+2025-03-11 19:21:52.830 | INFO     | anarci_toolz.pipeline:main:117 - Processing therasabdab_sample ...
+2025-03-11 19:21:52.855 | INFO     | anarci_toolz.abnumber_tool:run_parallel_abnumber:62 - Starting AbNumber processing ...
+Processing sequences: 100%|█████████████████████████████████████████████████████████████████████████████| 100/100 [00:00<00:00, 70421.49seq/s]
+2025-03-11 19:21:55.107 | SUCCESS  | anarci_toolz.abnumber_tool:parallel_get_region_seqs:138 - AbNumber parallel processing complete
+2025-03-11 19:21:55.160 | INFO     | anarci_toolz.anarci_tool:run_parallel_anarci:91 - Starting ANARCI processing ...
+Processing sequences: 100%|█████████████████████████████████████████████████████████████████████████████| 100/100 [00:00<00:00, 64776.90seq/s]
+2025-03-11 19:21:56.466 | SUCCESS  | anarci_toolz.anarci_tool:run_parallel_anarci:104 - ANARCI parallel processing complete
+2025-03-11 19:21:56.495 | SUCCESS  | anarci_toolz.pipeline:run_anarci_toolz:86 - anarci-toolz run complete.
+2025-03-11 19:21:56.495 | INFO     | anarci_toolz.pipeline:main:135 - Writing therasabdab_sample_anarci_annot.csv ...
+2025-03-11 19:21:56.499 | INFO     | anarci_toolz.pipeline:main:140 - Total runtime: 3.67 seconds
+
+```
+
+Output table, note the output columns are appended to the existing input columns:
+
+|    | Therapeutic   | Format    | chain_type_input   | sequence_aa                                                                                                                          | scheme   | passed_abnumber   | sequence_alignment_aa                                                                                                                | species   | chain_type   | v_gene      | j_gene   | cdr1_aa   | cdr2_aa   | cdr3_aa                    | fr1_aa                    | fr2_aa            | fr3_aa                                 | fr4_aa      | passed_anarci   |   variable_region_start_index |   variable_region_end_index |   e_value |   bitscore |   bias |
+|----|---------------|-----------|--------------------|--------------------------------------------------------------------------------------------------------------------------------------|----------|-------------------|--------------------------------------------------------------------------------------------------------------------------------------|-----------|--------------|-------------|----------|-----------|-----------|----------------------------|---------------------------|-------------------|----------------------------------------|-------------|-----------------|-------------------------------|-----------------------------|-----------|------------|--------|
+|  0 | Timigutuzumab | Whole mAb | HeavySequence      | EVQLVESGGGLVQPGGSLRLSCAASGFNIKDTYIHWVRQAPGKGLEWVARIYPTNGYTRYADSVKGRFTISADTSKNTAYLQMNSLRAEDTAVYYCSRWGGDGFYAMDYWGQGTLVTVSS             | imgt     | True              | EVQLVESGGGLVQPGGSLRLSCAASGFNIKDTYIHWVRQAPGKGLEWVARIYPTNGYTRYADSVKGRFTISADTSKNTAYLQMNSLRAEDTAVYYCSRWGGDGFYAMDYWGQGTLVTVSS             | human     | H            | IGHV3-66*01 | IGHJ4*01 | GFNIKDTY  | IYPTNGYT  | SRWGGDGFYAMDY              | EVQLVESGGGLVQPGGSLRLSCAAS | IHWVRQAPGKGLEWVAR | RYADSVKGRFTISADTSKNTAYLQMNSLRAEDTAVYYC | WGQGTLVTVSS | True            |                             0 |                         120 |   2.6e-60 |      193.3 |    0.5 |
+|  1 | Inebilizumab  | Whole mAb | HeavySequence      | EVQLVESGGGLVQPGGSLRLSCAASGFTFSSSWMNWVRQAPGKGLEWVGRIYPGDGDTNYNVKFKGRFTISRDDSKNSLYLQMNSLKTEDTAVYYCARSGFITTVRDFDYWGQGTLVTVSS            | imgt     | True              | EVQLVESGGGLVQPGGSLRLSCAASGFTFSSSWMNWVRQAPGKGLEWVGRIYPGDGDTNYNVKFKGRFTISRDDSKNSLYLQMNSLKTEDTAVYYCARSGFITTVRDFDYWGQGTLVTVSS            | human     | H            | IGHV3-66*01 | IGHJ4*01 | GFTFSSSW  | IYPGDGDT  | ARSGFITTVRDFDY             | EVQLVESGGGLVQPGGSLRLSCAAS | MNWVRQAPGKGLEWVGR | NYNVKFKGRFTISRDDSKNSLYLQMNSLKTEDTAVYYC | WGQGTLVTVSS | True            |                             0 |                         121 |   1.2e-61 |      197.6 |    0.3 |
+|  2 | Frexalimab    | Whole mAb | HeavySequence      | EVQLQESGPGLVKPSETLSLTCTVSGDSITNGFWIWIRKPPGNKLEYMGYISYSGSTYYNPSLKSRISISRDTSKNQFSLKLSSVTAADTGVYYCAYRSYGRTPYYFDYWGQGTTLTVSS             | imgt     | True              | EVQLQESGPGLVKPSETLSLTCTVSGDSITNGFWIWIRKPPGNKLEYMGYISYSGSTYYNPSLKSRISISRDTSKNQFSLKLSSVTAADTGVYYCAYRSYGRTPYYFDYWGQGTTLTVSS             | rhesus    | H            | IGHV4-59*01 | IGHJ4*01 | GDSITNGF  | ISYSGST   | AYRSYGRTPYYFDY             | EVQLQESGPGLVKPSETLSLTCTVS | WIWIRKPPGNKLEYMGY | YYNPSLKSRISISRDTSKNQFSLKLSSVTAADTGVYYC | WGQGTTLTVSS | True            |                             0 |                         120 |   2.5e-56 |      180.1 |    2.7 |
+|  3 | Vantictumab   | Whole mAb | HeavySequence      | EVQLVESGGGLVQPGGSLRLSCAASGFTFSHYTLSWVRQAPGKGLEWVSVISGDGSYTYYADSVKGRFTISSDNSKNTLYLQMNSLRAEDTAVYYCARNFIKYVFANWGQGTLVTVSS               | imgt     | True              | EVQLVESGGGLVQPGGSLRLSCAASGFTFSHYTLSWVRQAPGKGLEWVSVISGDGSYTYYADSVKGRFTISSDNSKNTLYLQMNSLRAEDTAVYYCARNFIKYVFANWGQGTLVTVSS               | alpaca    | H            | IGHV3-23*04 | IGHJ1*01 | GFTFSHYT  | ISGDGSYT  | ARNFIKYVFAN                | EVQLVESGGGLVQPGGSLRLSCAAS | LSWVRQAPGKGLEWVSV | YYADSVKGRFTISSDNSKNTLYLQMNSLRAEDTAVYYC | WGQGTLVTVSS | True            |                             0 |                         118 |   5.6e-64 |      205.3 |    2.1 |
+|  4 | Elipovimab    | Whole mAb | HeavySequence      | QMQLQESGPGLVKPSETLSLTCSVSGASISDSYWSWIRRSPGKGLEWIGYVHKSGDTNYNPSLKSRVHLSLDTSKNQVSLSLTGVTAADSGKYYCARTLHGRRIYGIVAFNEWFTYFYMDVWGTGTQVTVSS | imgt     | True              | QMQLQESGPGLVKPSETLSLTCSVSGASISDSYWSWIRRSPGKGLEWIGYVHKSGDTNYNPSLKSRVHLSLDTSKNQVSLSLTGVTAADSGKYYCARTLHGRRIYGIVAFNEWFTYFYMDVWGTGTQVTVSS | rhesus    | H            | IGHV4-4*08  | IGHJ6*01 | GASISDSY  | VHKSGDT   | ARTLHGRRIYGIVAFNEWFTYFYMDV | QMQLQESGPGLVKPSETLSLTCSVS | WSWIRRSPGKGLEWIGY | NYNPSLKSRVHLSLDTSKNQVSLSLTGVTAADSGKYYC | WGTGTQVTVSS | True            |                             0 |                         132 |   3.5e-52 |      166.7 |    5.9 |
+
 ##### Example 1: Using required flags only
 ```Bash
 anarci-toolz \
