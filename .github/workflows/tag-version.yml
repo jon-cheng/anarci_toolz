@@ -1,5 +1,8 @@
 name: Tag new version
 
+permissions:
+  contents: write  # Grants write access to repository contents, including pushing tags
+
 on:
   push:
     branches:
