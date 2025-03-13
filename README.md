@@ -61,7 +61,7 @@ Corresponding DNA sequences that accompany the amino acid sequence may also be i
 
 
 ### Output
-The schema of the output DataFrame:
+The schema of the output DataFrame, mostly follows [AIRR Rearrangement Schema](https://docs.airr-community.org/en/latest/datarep/rearrangements.html) conventions:
 
 
 | Field | Description | Required |
