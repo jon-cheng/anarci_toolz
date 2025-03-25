@@ -7,7 +7,7 @@ Additionally, [AbNumber](https://abnumber.readthedocs.io/en/latest/) is a conven
 
 While the base [ANARCI tool](https://github.com/oxpig/ANARCI) and AbNumber are highly popular tools in the antibody engineering community, they may be somewhat difficult to use, especially for batch processing of large numbers of sequences.
 
-Here, we present `anarci-toolz`, a performant convenient wrapper for ANARCI and AbNumber antibody sequence aligners based on ANARCI. The tool combines annotations from both tools in a consolidated output table. We provide improved usability of the ANARCI tool by providing support for tabular (`.csv` or DataFrame) inputs and outputs. The user only has to provide a table of amino acid sequences. This package utilizes Python `multiprocessing` to leverage some or all available CPU cores on an instance, which significantly reduces run times than base ANARCI without multiprocessing.
+Here, we present `anarci-toolz`, a performant convenient wrapper for ANARCI and AbNumber antibody sequence enumeration tools based on ANARCI. The tool combines annotations from both tools in a consolidated output table. We provide improved usability of the ANARCI tool by providing support for tabular (`.csv` or DataFrame) inputs and outputs. The user only has to provide a table of amino acid sequences. This package utilizes Python `multiprocessing` to leverage some or all available CPU cores on an instance, which significantly reduces run times than base ANARCI without multiprocessing.
 
 ## Installation
 
