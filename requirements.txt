@@ -3,3 +3,4 @@ numexpr>=2.8.4
 pandas>=2.2.1
 tqdm>=4.66.2
 pandera>=0.20.4
+biopython
