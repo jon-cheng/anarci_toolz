@@ -33,6 +33,39 @@ conda install --yes -c bioconda abnumber
 
 You should install `anarci-toolz` within the same conda environment or Docker image as ANARCI and AbNumber.
 
+### Docker 
+
+*This is the recommended installation route:*
+
+As an alternative to the conda install above, a `Dockerfile` at the repo root bundles `anarci-toolz`, ANARCI, and AbNumber into a single image. It installs HMMER via `apt` and builds ANARCI/AbNumber from source, rather than through bioconda's `anarci` package — which only ships an osx-64 build. This makes the image portable across Ubuntu/x86 and Apple Silicon without any Rosetta workaround or per-architecture branching.
+
+Build (run from the repo root):
+```Bash
+docker build -t anarci-toolz .
+```
+This picks up your machine's native architecture automatically. To build for a specific architecture (e.g. cross-building an `amd64` image from an Apple Silicon Mac to sanity-check before CI):
+```Bash
+docker buildx build --platform linux/amd64 -t anarci-toolz:amd64 --load .
+```
+
+Run the CLI, mounting your input directory and an output directory:
+```Bash
+docker run --rm \
+  -v "$(pwd)/test_files:/app/test_files" \
+  -v "$(pwd)/anarci_annot_out:/app/anarci_annot" \
+  anarci-toolz \
+  --input /app/test_files \
+  --scheme imgt \
+  --seq_aa_header sequence_aa \
+  --allowed_species human
+```
+Results are written to a relative `anarci_annot/` directory under the container's working directory (`/app`), so that's the path to mount to get output back on the host — swap `/app/test_files` for wherever your own CSVs are mounted.
+
+To use `anarci-toolz` as an importable library inside the container instead of via the CLI:
+```Bash
+docker run --rm -it --entrypoint python3 anarci-toolz
+```
+
 
 ## Usage
 ### Input
@@ -106,9 +139,7 @@ import pandas as pd
 from anarci_tools.pipeline import run_anarci_tools
 
 
-df = pd.read_csv(
-    "/path/to/myfiles/myfile.csv"
-)
+df = pd.read_csv("/path/to/myfiles/myfile.csv")
 df_result = run_anarci_tools(
     df=df,
     scheme="imgt",
@@ -234,81 +265,4 @@ anarci-toolz \
 
 ## Addendum
 
-### Requirement Note: Troubleshooting ANARCI installation
-ANARCI has a dependency on HMMER. From HMMER's documentation: "HMMER requires Intel/AMD compatible machines, Apple OS/X Intel or ARM machines." For example, a direct install on Apple Mac Silicon machines will not work. If you are attempting to install ANARCI locally on a Mac using conda, you may run into this problem:
-
-```
-conda install --yes -c bioconda anarci
-Retrieving notices: ...working... done
-Channels:
- - bioconda
- - defaults
-Platform: osx-arm64
-Collecting package metadata (repodata.json): done
-Solving environment: failed
- 
-LibMambaUnsatisfiableError: Encountered problems while solving:
-  - nothing provides hmmer >=3.1 needed by anarci-2020.04.23-py_0
- 
-Could not solve for environment specs
-The following package could not be installed
-└─ anarci is not installable because it requires
-   └─ hmmer >=3.1 , which does not exist (perhaps a missing channel).
-```
-
-This is due to ANARCI being incompatible with the Apple Silicon osx-arm64 architecture. ANARCI depends on HMMER. From HMMER's documentation: "HMMER requires Intel/AMD compatible machines, Apple OS/X Intel or ARM machines."
-
-Here is one work-around: use Apple's [Rosetta](https://support.apple.com/en-us/102527) to emulate the Intel architecture osx-64 needed to run ANARCI. 
-
-1. Install Rosetta:
-```Bash
-/usr/sbin/softwareupdate --install-rosetta --agree-to-license
-```
-
-2. Apply an environment variable: conda setting to run osx-64
-```Bash
-export CONDA_SUBDIR=osx-64
-```
-
-3. Create a new conda environment for running on osx-64
-```Bash
-conda create -n <env_name> python=3.10 # or whatever Python version you need
-  
-conda activate <env_name>
-```
-
-4. Try the ANARCI conda installation: 
-```Bash
-conda install --yes -c bioconda anarci
-```
-
-5. When you want to revert to your Mac's native M2 architecture, e.g. for things other than ANARCI, you can run: 
-```Bash
-unset CONDA_SUBDIR
-```
-
-
-
-### Installing ANARCI and AbNumber from source code
-
-As an alternative to conda, you may install ANARCI and Abnumber from source code:
-
-#### ANARCI
-```Dockerfile
-# Add to Dockerfile
-RUN apt update && apt install -y \
-    hmmer \
-    && pip install biopython \
-    && git clone https://github.com/oxpig/ANARCI.git \
-    && cd ANARCI \
-    && python3 setup.py install
-ENV PATH="${PATH}:/ANARCI/bin"
-```
-
-#### AbNumber
-```Dockerfile
-# Add to Dockerfile
-RUN git clone https://github.com/prihoda/AbNumber.git \
-    && cd AbNumber \
-    && python3 setup.py install
-```
+Having trouble installing ANARCI/AbNumber outside of Docker (e.g. the Apple Silicon/HMMER conda conflict, or installing from source)? See [docs/troubleshooting.md](docs/troubleshooting.md).
