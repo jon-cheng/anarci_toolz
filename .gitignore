@@ -4,6 +4,7 @@
 # Development
 /notebooks/
 **/anarci_annot/
+**/anarci_annot_out/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
