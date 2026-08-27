@@ -1,0 +1,27 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tier1-unit-tests:
+    name: Tier 1 (pure-logic unit tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - run: pip install -r requirements.txt pytest pytest-mock
+      - run: pytest -m "not bio" -q
+
+  tier2-bio-tests:
+    name: Tier 2 (real ANARCI/AbNumber, via Docker)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t anarci-toolz-test .
+      - name: Run bio-dependent tests
+        run: docker run --rm --entrypoint pytest anarci-toolz-test -m bio -q
