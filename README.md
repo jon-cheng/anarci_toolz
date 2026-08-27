@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/anarci--toolz%20-%20version%200.1.1-brightgreen)
+![Version](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjon-cheng%2Fanarci_toolz%2Fmain%2Fsrc%2Fanarci_toolz%2F__init__.py&search=__version__%20%3D%20%22%28.%2A%29%22&label=anarci-toolz&color=brightgreen)
 
 # anarci_toolz
 
@@ -262,6 +262,17 @@ anarci-toolz \
     --display_residue_view \
 ```
 
+## Performance Benchmarks
+
+Timed with the [`test_files/therasabdab_sample.csv`](test_files/therasabdab_sample.csv) fixture (100 real antibody heavy-chain sequences), `scheme="imgt"`, `allowed_species=["human"]`, on a 10-core Apple Silicon Mac running ANARCI/AbNumber/HMMER natively (no Rosetta). Each row is total wall-clock time for `run_anarci_toolz()` end-to-end, including process-pool startup — not a steady-state per-sequence rate. Numbers will vary by machine, sequence mix, and background load; treat these as directional, not a guarantee.
+
+| Configuration | Sequences | Wall time |
+| --- | --- | --- |
+| Full pipeline (ANARCI + AbNumber), `num_cpu=1` | 100 | 5.14s |
+| Full pipeline (ANARCI + AbNumber), `num_cpu=10` (all cores) | 100 | 2.30s |
+| AbNumber only (`skip_run_base_anarci=True`), `num_cpu=10` | 100 | 1.17s |
+
+Two takeaways: multiprocessing roughly halves wall time on this 10-core machine going from `num_cpu=1` to all cores (5.14s → 2.30s) — sub-linear because pool startup and per-task overhead don't parallelize; and skipping the base ANARCI call (`skip_run_base_anarci=True`) roughly halves wall time again, since it avoids a second full HMMER search pass per sequence. The differences will track more linearly with CPU for larger input sizes.
 
 ## Addendum
 
