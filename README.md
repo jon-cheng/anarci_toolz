@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjon-cheng%2Fanarci_toolz%2Fmain%2Fsrc%2Fanarci_toolz%2F__init__.py&search=__version__%20%3D%20%22%28.%2A%29%22&label=anarci-toolz&color=brightgreen)
+![Version](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjon-cheng%2Fanarci_toolz%2Fmain%2Fsrc%2Fanarci_toolz%2F__init__.py&search=__version__%20%3D%20%22%28.%2A%29%22&replace=%241&label=anarci-toolz&color=brightgreen)
 
 # anarci_toolz
 
