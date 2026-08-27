@@ -32,6 +32,12 @@ COPY src/ src/
 
 RUN pip install --no-cache-dir .
 
+# Test-only deps (not in requirements.txt / install_requires — they're not
+# needed to *use* anarci-toolz, only to run its test suite, which is what
+# this image's CI job does via `--entrypoint pytest`).
+RUN pip install --no-cache-dir pytest pytest-mock
+
+COPY pytest.ini ./
 COPY test_files/ test_files/
 COPY tests/ tests/
 
