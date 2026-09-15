@@ -1,0 +1,11 @@
+# NOTE: this file is currently a stopgap. Packaging is actually driven by
+# setup.cfg (name, version, core deps, the `anarci-toolz` entry point). This
+# file exists only to declare the new `api` extra and its entry point per the
+# API-scaffolding task; a full migration of packaging to pyproject.toml/uv is
+# tracked as separate follow-up work.
+
+[project.optional-dependencies]
+api = ["fastapi", "uvicorn[standard]", "pydantic-settings"]
+
+[project.scripts]
+anarci-toolz-api = "anarci_toolz.api.main:run"
