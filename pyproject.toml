@@ -1,0 +1,40 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "anarci-toolz"
+dynamic = ["version"]
+authors = [{name = "Jonathan Cheng", email = "jonchengw@gmail.com"}]
+license = "MIT"
+description = "Performant convenience wrapper for ANARCI and AbNumber antibody sequence aligners, notably for sequence annotation"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "loguru>=0.7.2",
+    "numexpr>=2.8.4",
+    "pandas>=2.2.1",
+    "tqdm>=4.66.2",
+    "pandera>=0.20.4",
+    "biopython",
+]
+
+[project.optional-dependencies]
+api = ["fastapi", "uvicorn[standard]", "pydantic-settings"]
+# Test-only deps, previously installed ad hoc in CI/Dockerfile
+# (`pip install pytest pytest-mock`) rather than declared anywhere.
+dev = ["pytest", "pytest-mock"]
+
+[project.scripts]
+anarci-toolz = "anarci_toolz.__main__:main"
+anarci-toolz-api = "anarci_toolz.api.main:run"
+
+[tool.hatch.version]
+path = "src/anarci_toolz/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/anarci_toolz"]

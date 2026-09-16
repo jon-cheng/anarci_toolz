@@ -27,15 +27,17 @@ RUN git clone --depth 1 https://github.com/prihoda/AbNumber.git /opt/AbNumber \
 
 WORKDIR /app
 
-COPY requirements.txt setup.cfg pyproject.toml MANIFEST.in ./
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
+COPY pyproject.toml uv.lock MANIFEST.in README.md ./
 COPY src/ src/
 
-RUN pip install --no-cache-dir .
+RUN uv pip install --system --no-cache .
 
-# Test-only deps (not in requirements.txt / install_requires — they're not
-# needed to *use* anarci-toolz, only to run its test suite, which is what
-# this image's CI job does via `--entrypoint pytest`).
-RUN pip install --no-cache-dir pytest pytest-mock
+# Test-only deps (the `dev` extra — not needed to *use* anarci-toolz, only to
+# run its test suite, which is what this image's CI job does via
+# `--entrypoint pytest`).
+RUN uv pip install --system --no-cache .[dev]
 
 COPY pytest.ini ./
 COPY test_files/ test_files/
